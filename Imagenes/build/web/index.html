@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Imagenes</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+          <canvas id="canvas">
+            <p>Tu navegador no soporta Canvas.</p>
+          </canvas>
+        <br>
+         <img id="r"/>
+         <img id="g"/>
+         <img id="b"/>
+    <script>
+       
+       
+            function Calcular2(n,r){
+                 var aux = 0;
+                 var mult = 9;
+                 var raiz = r;
+                 var cons = 9;
+                 var mod = 255;
+                // alert("show me the guns");
+                 for (var i = 0; i < n; i++) {
+                 aux = ((mult * raiz) + cons) % mod;
+                 raiz = aux;
+                 
+                }
+                alert("pixel"+n);
+                return aux;
+            }
+           
+            
+            
+            function RegresarBin(num){
+                //convierte de binario a decimal
+                var al=0;
+                var aux;
+                var par=128;
+                for(var i=0;i<8;i++){
+                        aux=num.substring(i,i+1);
+                        if(aux==="1"){
+                            al=al+par;
+                        }
+                        par=par/2;
+                }
+                return al;
+            }  
+            //los burritos son alimento
+            function NoAleatorio(al){
+                //aqui estas convirtiendo a binario cualquier numero que sea al
+                var num;
+                var aux;
+                var par=128;
+                for(var i=7;i>=0;i--){
+                    if(i===7){
+                        if(par<=al){
+                            al=al-par;
+                            aux=1;
+                        }else{
+                            aux=0;
+                        }
+                        num=aux;
+                        par=par/2;
+                    }else{
+                        if(par<=al){
+                            al=al-par;
+                            aux=1;
+                        }else{
+                            aux=0;
+                        }
+                        num=num+""+aux;
+                        par=par/2;
+                    }
+                        
+                }
+                return num;
+            }   
+            
+            function Operaciones2(al,canal){
+            var res;
+            res=al^canal;
+            return res;
+            }
+            function Operaciones(al,canal){
+                var result;
+                var aux;
+                var alaux;
+                var canalaux;
+                //aqui hace XOR aleatorio con canal
+                for(var i=0;i<8;i++){
+                    if(i===0){
+                        alaux=al.substring(i,i+1);
+                        canalaux=canal.substring(i,i+1);
+                        if(alaux===canalaux){
+                            aux=0;
+                            result=aux;
+                        }else{
+                            aux=1;
+                            result=aux;
+                        }
+                    }else{
+                        alaux=al.substring(i,i+1);
+                        canalaux=canal.substring(i,i+1);
+                        if(alaux===canalaux){
+                            aux=0;
+                            result=result+""+aux;
+                        }else{
+                            aux=1;
+                            result=result+""+aux;
+                        }
+                    }
+                }
+                return result;
+            } 
+            
+            
+            
+            var canvas = document.getElementById('canvas');// canvas
+            var ctx = canvas.getContext('2d'); // contexto
+
+            var imgR = document.getElementById('r');// imagen que representa el canal R
+            var imgG = document.getElementById('g');// imagen que representa el canal G
+            var imgB = document.getElementById('b');// imagen que representa el canal B
+
+            var srcImg = "example.jpg";// imagen fuente
+
+            // nueva imagen
+            img = new Image();
+            img.src = srcImg;
+
+            // cargo la imagen
+            img.onload = function() {
+
+                // reescalamos el canvas a las dimenciones de la imagen
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                // dibujamos la imagen en el Canvas
+                ctx.drawImage(this, 0, 0);
+                getRGB();
+            };
+
+            // pinta una imagen por canal
+            function getRGB() {
+                // obtenemos el ImageData
+    var imgd = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    // obtenemos el ImageData para R
+    var imgdR = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    var longitud=canvas.height;
+    var altitud=canvas.width;
+    var pixtotal=longitud*altitud;
+                // cada una de estos array va a tener un solo canal
+    var pixR = imgdR.data;
+    // va a tener los 3 canales; la usaremos 
+    // para reestablecer los colores originales en el canvas
+    var pix = imgd.data;
+    var pixeles=0;
+                alert("pixeles totales "+pixtotal);
+               
+                for (var i = 0, n = pixR.length; i < n; i += 4) {
+                   pixeles=pixeles+1;
+                   
+                    //pix[i] = 0;R
+                    //pix[i + 1] = 0;G
+                    //pix[i + 2] = 0;B
+                    alert(al);
+                    var R=pixR[i];
+                    var G=pixR[i+1];
+                    var B=pixR[i+2];
+                    var al=Calcular2(pixeles,G); 
+                    
+                    //var R=NoAleatorio(pixR[i]);
+                    //var G=NoAleatorio(pixR[i+1]);
+                    //var B=NoAleatorio(pixR[i+2]);
+                        
+                    R=Operaciones2(al,R);
+                    G=Operaciones2(al,G);
+                    B=Operaciones2(al,B);
+                    
+                    //R=RegresarBin(R);
+                    //G=RegresarBin(G);
+                    //B=RegresarBin(B);
+                    
+                    pixR[i]=R;
+                    pixR[i+1]=G;
+                    pixR[i+2]=B;
+                    
+                }
+                // retornamos la data modificada al Canvas; canal R
+                ctx.putImageData(imgdR, 0, 0);
+                dataURL = canvas.toDataURL();
+                imgR.src = dataURL;
+                // retornamos la data original al Canvas; canal RGB
+                ctx.putImageData(imgd, 0, 0);
+            }
+        </script>
+    </body>
+</html>
